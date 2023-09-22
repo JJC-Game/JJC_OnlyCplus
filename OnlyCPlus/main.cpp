@@ -20,7 +20,7 @@ GameManager* g_gameManager;
 #define CHARA_W (282)
 #define CHARA_H (380)
 
-#define TEXT_NUM (3)
+#define TEXT_NUM (4)
 
 
 
@@ -31,6 +31,7 @@ public:
         _tcscpy_s(m_text[0], 300 * sizeof(TCHAR), TEXT("僕は男の子！"));
         _tcscpy_s(m_text[1], 300 * sizeof(TCHAR), TEXT("私は女の子！"));
         _tcscpy_s(m_text[2], 300 * sizeof(TCHAR), TEXT("いえーい！"));
+        _tcscpy_s(m_text[3], 300 * sizeof(TCHAR), TEXT("終わり"));
         m_textId = 0;
     }
 
@@ -95,7 +96,7 @@ public:
     }
 
 public:
-    TCHAR m_text[4][300];
+    TCHAR m_text[TEXT_NUM+1][300];
     int m_textId;
 };
 
