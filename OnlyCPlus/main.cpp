@@ -6,6 +6,7 @@
 #include <random>
 #include <string>
 #include <tchar.h>
+#include "resource.h"
 using namespace Gdiplus;
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
@@ -13,6 +14,7 @@ class GameManager;
 class Bullet;
 
 GameManager* g_gameManager;
+HINSTANCE g_hInstance;
 
 #define SCREEN_W (1280)
 #define SCREEN_H (720)
@@ -121,6 +123,8 @@ int WINAPI WinMain(
     wc.lpszMenuName = NULL;
     wc.lpszClassName = szAppName;
 
+    g_hInstance = hInstance;
+
     // ウィンドウクラスを登録
     if (!RegisterClass(&wc)) return 0;
     int cxSizeFrame = GetSystemMetrics(SM_CXSIZEFRAME);
@@ -216,7 +220,39 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         g_gameManager->Draw(&graphics);
 
         BitBlt(hdc, 0, 0, SCREEN_W, SCREEN_H, hMemDC, 0, 0, SRCCOPY);
+
+
+        /* ビットマップの表示 */
+        HBITMAP	hBmp;	//ビットマップハンドル
+        BITMAP bmp;		//ビットマップ情報を保存する構造体
+        HDC hmdc;	//メモリデバイスコンテキスト
+
+        //ビットマップの読み込み
+        hBmp = LoadBitmap(g_hInstance, MAKEINTRESOURCE(IDB_BITMAP1));
+
+        //ビットマップ情報の取得
+        GetObject(hBmp, sizeof(BITMAP), &bmp);
+
+        //メモリデバイスコンテキストの取得
+        hmdc = CreateCompatibleDC(hdc);
+
+        //メモリデバイスコンテキストにビットマップハンドルをセット
+        SelectObject(hmdc, hBmp);
+
+        //メモリデバイスコンテキストから
+        //デバイスコンテキストにデータを転送
+        BitBlt(
+            hdc, 0, 0, bmp.bmWidth, bmp.bmHeight,
+            hmdc, 0, 0, SRCCOPY);
+
+        //メモリデバイスコンテキストと
+        //ビットマップハンドルの削除
+        DeleteDC(hmdc);
+        DeleteObject(hBmp);
+        /* ビットマップの表示ここまで */
+
         EndPaint(hwnd, &ps);
+
     }
     return 0;
     case WM_LBUTTONDOWN:
